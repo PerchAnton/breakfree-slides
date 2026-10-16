@@ -36,26 +36,15 @@ Run the documented Rust formatting, lint and test commands, plus Markdown links,
 - Follow `docs/VERSIONING.md` and ADR 0002. Keep all alpha, beta and release-candidate builds in the `0.1.0` line: `0.1.0-alpha.N`, `0.1.0-beta.N`, `0.1.0-rc.N`. The first owner-authorized public product release starts at `0.2.0` (display shorthand: 0.2).
 - Use `[workspace.package].version` in root `Cargo.toml` as the application-version source of truth. Keep inherited package/lock versions, executable `--version`, Office `app_version` and release notes consistent. Native document content and Office protocol versions are independent.
 - End every completed work report with the actual current application version and its owner-approval status, even when the number did not change. Separate a proposed next version from the actual version. The existing `0.1.0-alpha.1` is awaiting explicit owner approval under this policy.
-- Obtain explicit owner confirmation for a proposed version change or channel promotion. Record the approved version and confirmation date in `docs/VERSIONING.md` and both project logs. No reply, successful tests, CI, commit or PR publication counts as approval.
+- Obtain explicit owner confirmation for a proposed version change or channel promotion. Record the approved version and confirmation date in `docs/VERSIONING.md` and `docs/PROJECT_LOG.md`. No reply, successful tests, CI, commit or PR publication counts as approval.
 - Maintain `CHANGELOG.md`; record unreleased work separately from published releases. Creating tags, publishing artifacts/releases and merging require the corresponding explicit authorization; version approval alone does not authorize those actions. Preserve published tags and artifacts without rewriting them.
 
-## Журнал и приватное зеркало
+## Project log
 
-Maintain **two complete copies** of the BreakFree Slides project log after every meaningful work stage and whenever a check is requested:
+Maintain `docs/PROJECT_LOG.md` after each meaningful work stage and whenever a check is requested. Keep the six sections: «Текущее состояние», «Работа и проверки», «Комментарии и ревью», «Предложения и просьбы о помощи», «Следующие действия» and «История проверок». Use English entries and tables for events/tasks, with Europe/Kyiv timestamps, completed work, source links, results and limitations.
 
-- Primary: `PerchAnton/breakfree-slides`, path `docs/PROJECT_LOG.md`, published through the project's branch/PR workflow.
-- Private mirror: `PerchAnton/gitwork`, branch `main`, exact path `breakfree/breakfree-slides/PROJECT_LOG.md`.
+Track issue/PR conversations, reviews, inline threads and enabled Discussions, including new replies on older objects. Record each event's @author, human/bot account type, date, direct URL, required action and handling status. Record explicit help offers/requests without inferring assignments from offers, stars or forks. Assign responsible people only when confirmed.
 
-This requirement replaces the previous instruction not to duplicate this project's log in `gitwork`. Keep this project's records separate from other projects. Before changes, read the current repository instructions and log, and the current `prompts/breakfree-slides.md` in `PerchAnton/gitwork/main`. Fetch remote updates safely and preserve local and other contributors' changes.
+Preserve project history and update existing events by canonical URL. Record source coverage, checkpoints and inaccessible sources. Separate code readiness, local tests, server CI, merge and release. Fetch safely before writing, preserve local/contributor changes, and publish journal updates in dedicated commits through the branch/PR workflow. Do not force push.
 
-Keep the six log sections: «Текущее состояние», «Работа и проверки», «Комментарии и ревью», «Предложения и просьбы о помощи», «Следующие действия» and «История проверок». Use tables for events and tasks. Record Europe/Kyiv timestamps, completed work, commit/PR/issue links, actual verification results and limitations. Separate code readiness, local tests, server CI, merge and release.
-
-For issues, PR conversations, reviews, inline threads and enabled Discussions, record each comment's @author, human/bot account type, date, direct URL, substance, required action and handling status. Record explicit help offers and requests with task, message URL and whether an owner response is needed. An offer is not an assignment; stars and forks are not offers. Record prioritized next actions, their sources, confirmed responsible people only, status and blockers. Preserve history, update an existing event by its canonical URL, and record source coverage, checkpoints and inaccessible sources. Include new replies on older issues and PRs in later checks.
-
-Publish journal updates in dedicated commits in the Slides repository. Then read fresh `gitwork/main` and its existing mirror before copying. Reconcile any additional mirror records into the primary log without losing history or publishing private correspondence or secrets, publish the reconciled source, and copy its **entire text without modification** into the mirror. Never append mirror metadata to `PROJECT_LOG.md` itself.
-
-Store mirror metadata separately at `PerchAnton/gitwork/main:breakfree/breakfree-slides/SYNC.md`: source repository, branch, path, full published source commit SHA, immutable source-file URL and synchronization time in Europe/Kyiv. Publish the mirror and metadata in a dedicated commit to `gitwork/main`; update only this project's row in the Breakfree table of its root `README.md` with brief status, source/mirror links, check time and next step. Preserve every other row and file. On a concurrent update, reread and reconcile the latest state, then retry without force push.
-
-Read both published copies back from GitHub and verify exact text equality. Updating only the Slides repository is incomplete. Report source and mirror commit links separately; do not claim synchronization before publication and verification. If private publication is unavailable, retain a ready local copy and explicitly report «приватная копия не отправлена».
-
-Do not send public replies, invitations or assignments without separate user instructions. No automatic monitoring is configured by this rule; do not promise scheduled checks.
+Do not post public replies, invitations or assignments without separate owner instructions. No automatic monitoring is configured; do not promise scheduled checks.

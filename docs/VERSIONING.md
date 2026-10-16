@@ -37,7 +37,7 @@ Do not add an independently maintained VERSION file or hard-code a second runtim
 
 ## Work report and approval record
 
-Every completed work report ends with the actual version and one of these explicit statuses: awaiting owner approval, approved by owner (with confirmation date), or previously approved and unchanged. Include a proposed next version separately when needed. Persist confirmed decisions here and in both copies of the project log; record an available public approval URL or identify an authorized owner decision without copying private correspondence.
+Every completed work report ends with the actual version and one of these explicit statuses: awaiting owner approval, approved by owner (with confirmation date), or previously approved and unchanged. Include a proposed next version separately when needed. Persist confirmed decisions here and in the project log; record an available public approval URL or identify an authorized owner decision without copying private correspondence.
 
 | Decision date (Europe/Kyiv) | Scope | Version / status | Evidence |
 | :--- | :--- | :--- | :--- |
@@ -47,7 +47,7 @@ Every completed work report ends with the actual version and one of these explic
 
 1. Prepare the completed changes, changelog, test evidence, GUI/platform limitations and current/proposed version for review. State version approval, code review, CI, merge and release as separate statuses.
 2. Obtain explicit owner confirmation of the proposed version/channel. Apply the agreed version consistently and record the confirmation. No response is not approval.
-3. Verify Cargo metadata/lock consistency, actual binary `--version` and Office `app_version`; run checks appropriate to the changed code. Record the exact tested code SHA. Update both project logs with results.
+3. Verify Cargo metadata/lock consistency, actual binary `--version` and Office `app_version`; run checks appropriate to the changed code. Record the exact tested code SHA. Update the project log with results.
 4. Before an authorized release, build and review artifacts from the agreed commit, record their names/platforms/checksums and any unavailable platform checks. Keep release notes and redistribution/license decisions explicit.
 5. Only with separate publication authorization, create an annotated `v<exact-version>` tag at the agreed commit and publish the corresponding release/artifacts. First public product release: `v0.2.0`. Do not overwrite a published tag/artifact; corrections receive a separately approved new version.
 
