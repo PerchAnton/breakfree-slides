@@ -22,3 +22,13 @@ Prioritize predictable object editing and safe save/reopen behavior, then basic 
 ## Validation
 
 For now, check Markdown links, image references and YAML syntax. Add real build/test commands with the first implementation. Report checks actually run, manual rendering checks and remaining limitations separately.
+
+## Project log
+
+Maintain `docs/PROJECT_LOG.md` after each meaningful work stage and whenever a check is requested. Keep the six sections: «Текущее состояние», «Работа и проверки», «Комментарии и ревью», «Предложения и просьбы о помощи», «Следующие действия» and «История проверок». Use English entries and tables for events/tasks, with Europe/Kyiv timestamps, completed work, source links, results and limitations.
+
+Track issue/PR conversations, reviews, inline threads and enabled Discussions, including new replies on older objects. Record each event's @author, human/bot account type, date, direct URL, required action and handling status. Record explicit help offers/requests without inferring assignments from offers, stars or forks. Assign responsible people only when confirmed.
+
+Preserve project history and update existing events by canonical URL. Record source coverage, checkpoints and inaccessible sources. Separate code readiness, local tests, server CI, merge and release. Fetch safely before writing, preserve local/contributor changes, and publish journal updates in dedicated commits through the branch/PR workflow. Do not force push.
+
+Do not post public replies, invitations or assignments without separate owner instructions. No automatic monitoring is configured; do not promise scheduled checks.
