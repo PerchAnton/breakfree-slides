@@ -6,4 +6,4 @@ Use this repository for slide models, object editing, layout, persistence, prese
 
 Start with [ROADMAP.md](ROADMAP.md) and [the first milestones](docs/REQUIREMENTS.md). Discuss rendering architecture, asset/font handling, dependencies and licensing before major implementation work. The software license is an owner decision still to be made.
 
-Use synthetic decks and redistributable visual assets. Never attach confidential presentations or font files without redistribution permission. Explain the checks actually run and identify visual limitations. No application build/test commands exist yet.
+Use synthetic decks and redistributable visual assets. Never attach confidential presentations or font files without redistribution permission. Explain the checks actually run and identify visual limitations. Follow [the Rust build/test instructions](docs/BUILD.md), [the approved direction and prototype ADR](docs/adr/0001-rust-native-editor.md), and [UI verification](docs/UI_VERIFICATION.md). Rust is mandatory; no JavaScript/TypeScript, Electron or WebView editor. Native Windows/DPI evidence must be reported separately from macOS or headless model tests.

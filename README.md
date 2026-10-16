@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-planning-D86B63?style=flat-square" alt="Status: planning">
+  <img src="https://img.shields.io/badge/status-prototype-D86B63?style=flat-square" alt="Status: prototype">
   <img src="https://img.shields.io/badge/focus-presentations-D86B63?style=flat-square" alt="Focus: presentations">
   <img src="https://img.shields.io/badge/suite-BreakFree%20Office-241337?style=flat-square" alt="Part of BreakFree Office">
 </p>
@@ -27,7 +27,7 @@
 ---
 
 > [!IMPORTANT]
-> **Planning stage — not a working presentation editor yet.** This repository contains project documentation and the development plan. There are no installers, presentation renderer or verified PPTX compatibility claims. Capabilities below describe proposed work.
+> **Native Rust prototype for review.** Editable text, rectangles and embedded raster images, undo/redo, native save/reopen and a minimal shared-renderer slide show are implemented. Automated checks and running-app captures are documented in [verification](docs/UI_VERIFICATION.md). Native Windows interaction/DPI checks and measured PowerPoint 2024 comparison remain unverified. No installers or PPTX support are available.
 
 ## Make your point beautifully
 
@@ -39,13 +39,13 @@ We want a small, understandable editor before a large collection of effects. Rea
 
 > **Create slides → Add content → Arrange → Save → Reopen → Present.**
 
-The first milestone will cover a slide list, text boxes, basic shapes and images, object positioning, undo/redo and safe local persistence. A basic presentation mode follows the verified editing and save/reopen workflow.
+The prototype includes a native Ribbon workspace, real slide thumbnails, text/rectangle/image editing, object geometry and stacking, undo/redo, local `.bfslide` files with embedded images, notes and a minimal presentation mode. The visual target is PowerPoint 2024 for Windows, with independent BreakFree branding; this is not a claim of visual or file-format parity.
 
-| Proposed first | Investigate next | Outside the initial scope |
+| Prototype scope | Investigate next | Outside the initial scope |
 | :--- | :--- | :--- |
 | Add, duplicate and reorder slides | Layouts and reusable themes | Full PowerPoint feature parity |
 | Text, shapes and image placement | Speaker notes and presenter tools | Complex animation timelines |
-| Selection, alignment and object order | PDF/image export | Embedded active content |
+| Selection, geometry and object order | PDF/image export | Embedded active content |
 | Undo, redo, save and reopen | A documented PPTX subset | Cloud collaboration |
 
 See the [acceptance criteria](docs/REQUIREMENTS.md) and [roadmap](ROADMAP.md) for the proposed sequence.
@@ -71,13 +71,21 @@ A future compatibility matrix must describe unsupported elements and font substi
 | Area | Current position |
 | :--- | :--- |
 | Product direction | Documented |
-| Implementation language and UI toolkit | Not selected |
-| Slide model and native deck format | Not selected |
-| Windows, macOS and Linux | Candidate targets; no supported builds yet |
-| Application code and automated tests | Not present yet |
+| Implementation language and UI toolkit | Rust required by the owner; native egui/eframe prototype proposed for review |
+| Slide model and native deck format | Editable objects in logical slide units; versioned `.bfslide` JSON with embedded raster bytes |
+| Windows, macOS and Linux | Native targets; local build/captures on macOS, Windows/DPI and other platform evidence still pending |
+| Application code and automated tests | Rust workspace, command/persistence/contract regression tests and actual GUI captures present |
 | Software license | Owner decision pending |
 
-There is nothing to install yet. Verified build instructions will be added with the first implementation. The suite begins with Docs; Slides retains its own repository and development plan.
+Build and run independently from this repository:
+
+```text
+cargo build --workspace --locked
+cargo test --workspace --locked
+cargo run --locked -p breakfree-slides -- --new
+```
+
+See [Windows and other native launch instructions](docs/BUILD.md), [the owner-approved Rust direction and architecture](docs/adr/0001-rust-native-editor.md), [UI reference parameters](docs/UI_SPEC.md), [actual captures and verification limits](docs/UI_VERIFICATION.md), and [dependency/font notices](docs/DEPENDENCIES.md). `--capabilities` emits JSON without starting the GUI; `--version` reports the build version. Office integration uses an explicitly unverified local fallback snapshot until an upstream contract is published.
 
 ## The BreakFree family
 

@@ -1,6 +1,6 @@
 # Working in BreakFree Slides
 
-Read README.md, ROADMAP.md, docs/REQUIREMENTS.md and CONTRIBUTING.md first. The repository is currently documentation-only; language, toolkit, license and native format are not selected.
+Read README.md, ROADMAP.md, docs/REQUIREMENTS.md, docs/UI_SPEC.md, CONTRIBUTING.md and the ADRs first. Rust is the owner-approved mandatory implementation language. The software license remains an owner decision.
 
 ## Scope
 
@@ -8,7 +8,7 @@ Prioritize predictable object editing and safe save/reopen behavior, then basic 
 
 ## Rules
 
-- Preserve the approved name and shared office-document icon.
+- Preserve the approved BreakFree Slides name and dedicated transparent Slides icon.
 - Keep public documentation in English; separate plans from verified features.
 - Obtain owner review for license, architecture and major dependency choices.
 - Define coordinates, text/font fallback, asset storage and rendering semantics explicitly.
@@ -21,7 +21,15 @@ Prioritize predictable object editing and safe save/reopen behavior, then basic 
 
 ## Validation
 
-For now, check Markdown links, image references and YAML syntax. Add real build/test commands with the first implementation. Report checks actually run, manual rendering checks and remaining limitations separately.
+Run the documented Rust formatting, lint and test commands, plus Markdown links, image references and YAML checks. Report automated model/persistence tests, native GUI evidence and unavailable Windows/DPI checks separately. Do not infer Windows verification from macOS screenshots.
+
+## Approved language and desktop UI direction
+
+- Implement the model, commands, persistence, rendering, native editor, slide show and Office adapter in Rust. JavaScript/TypeScript, Electron and a WebView-hosted editor are not allowed.
+- Follow the Windows desktop Microsoft PowerPoint 2024 workspace as closely as possible in composition, proportions, panel sizes, command groups and interactions, while retaining BreakFree branding. Record reference parameters and honest comparison limits in `docs/UI_SPEC.md`; do not invent a measured build or screenshot reference.
+- Preserve a title/document bar, File and compact Ribbon, the specified main tabs and Home groups, left slide thumbnails, neutral central workspace, collapsible notes, contextual right formatting pane and status/view/zoom controls. Unimplemented actions must be disabled with an explanation. No fake cloud functions or Microsoft logo/name substitution.
+- Keep the GUI separate from the presentation model and engine. Editing, thumbnails and slide show must share the same content rendering path and slide geometry. Selection handles follow object geometry; viewport/DPI zoom never changes stored coordinates.
+- Capture actual running-app states and maintain explicit Windows 100%, 125%, 150%, resize, focus and keyboard verification status. Owner approval of Rust and the visual target is final; the provisional Rust GUI toolkit remains reviewable, and the license is unchanged. See `docs/adr/0001-rust-native-editor.md`.
 
 ## Журнал и приватное зеркало
 
