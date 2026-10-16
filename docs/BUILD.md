@@ -54,6 +54,6 @@ F5 starts at the beginning, Shift+F5 at the current slide. Arrows, PageUp/PageDo
 cargo run --locked -p breakfree-slides -- --ui-smoke <absolute_output_directory>
 ```
 
-This explicit diagnostic opens the real application, constructs a synthetic editable three-slide fixture, captures six framebuffer states and exits without saving the fixture as a user document. It is separate from ordinary launch behavior. See [UI_SPEC](UI_SPEC.md) and [UI verification](UI_VERIFICATION.md) for reference settings, captures, differences and unavailable checks. Core view-transform tests do not certify native Windows scaling.
+This explicit diagnostic opens the real application, constructs a synthetic editable three-slide fixture, captures seven framebuffer states and exits without saving the fixture as a user document. It is separate from ordinary launch behavior. See [UI_SPEC](UI_SPEC.md) and [UI verification](UI_VERIFICATION.md) for reference settings, captures, differences and unavailable checks. The final state programmatically resizes the actual native window to 980 × 680. Core/headless view-transform tests do not certify native Windows scaling.
 
 Not implemented: PPTX, themes/layouts, complex animations, multimedia, AI, cloud collaboration, arbitrary fonts, rich text, rotation, multi-selection and presenter tools. Unimplemented commands are disabled with explanatory hover text.

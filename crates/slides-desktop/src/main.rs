@@ -1,4 +1,5 @@
 mod app;
+mod chrome;
 mod painting;
 
 use breakfree_slides_core::{

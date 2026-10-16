@@ -12,26 +12,26 @@ Primary documentation: Microsoft's [Ribbon and contextual-tab guide](https://sup
 
 | Zone | Prototype target / behavior | Current scope |
 | :--- | :--- | :--- |
-| Title and quick access | 37 logical pixels; approved 26-pixel transparent Slides icon, own name, document name, Save, Undo, Redo | Functional; native OS title decoration is additional on macOS |
+| Title and quick access | 40 logical pixels; approved 25-pixel transparent Slides icon, own name, document name, Save, Undo, Redo | Functional; native OS title decoration is additional on macOS |
 | File and tabs | File; Home, Insert, Draw, Design, Transitions, Animations, Slide Show, Record, Review, View, Help | Unsupported tabs disabled with tooltips; Record added per reference documentation |
-| Compact expanded Ribbon | 137 pixels including tabs; white background, compact controls, group separators | Horizontal scrolling at narrow widths; no floating toolbar substitution |
+| Compact expanded Ribbon | 144 pixels including 30-pixel tabs; white background, original vector command icons, large Paste/New Slide, compact command rows, group separators | Horizontal scrolling at narrow widths; no floating toolbar substitution |
 | Home | Clipboard, Slides, Font, Paragraph, Drawing, Editing, in that order | Real object clipboard, slide actions, font size/color/synthetic bold, text/rectangle/image insertion, selection formatting and delete; unsupported commands disabled with explanations |
 | Context tabs | Shape Format for text/rectangles; Picture Format for images; hidden without selection | Real size/position/color and arrange controls, no fake effects |
 | Thumbnails | Resizable left rail, default 202 pixels | Actual shared-renderer slide content; select, duplicate, delete, move up/down; keyboard Ctrl/Cmd+M and Ctrl/Cmd+D |
 | Workspace | Neutral gray, centered white 16:9 slide, bounded canvas with scrolling at high zoom | Selection, eight resize markers, drag move/resize, arrow nudge (Shift for 10 units), delete and in-object text editing |
-| Notes | Collapsible/resizable lower panel, default 105 pixels | Editable notes preserved in native files; presenter tools are not implemented |
-| Formatting | Contextual right pane, default 268 pixels | Numeric real model geometry, supported color/text controls, front/back order |
+| Notes | Collapsible/resizable panel below the canvas, between side panes; default 105 pixels | Editable notes preserved in native files; presenter tools are not implemented |
+| Formatting | Contextual right pane, default 268 pixels | Scrollable real model geometry, supported color/text controls, front/back order; Shape/Picture heading follows selection |
 | Status | Slide number/count, Notes, Normal, show launch, zoom and Fit | Unimplemented view buttons disabled; zoom affects only viewport |
 | Slide show | F5 beginning; Shift+F5 current; arrows/Space/Page keys; Escape | Same scene/painter, letterboxed fit, no transitions; show navigation does not edit the deck |
 | File safety | File view and native dialogs; local .bfslide only | Save/Discard/Cancel for new/open/close; canceled/failed save leaves the pending operation unexecuted |
 
-Object clipboard is internal to the current presentation; copying text to/from external applications uses the text editor's native clipboard. Slide reordering currently uses explicit Move Up/Down buttons rather than thumbnail drag/drop. The initial renderer has axis-aligned objects, one selected object, plain wrapped text and stretch-to-bounds images. Synthetic bold, bundled fonts, control styling, adaptive Ribbon collapse, accessibility and rich text differ from PowerPoint. No cloud/account/sharing status is fabricated.
+Object clipboard is internal to the current presentation; copying text to/from external applications uses the text editor's native clipboard. Slide reordering currently uses explicit Move Up/Down buttons rather than thumbnail drag/drop. The initial renderer has axis-aligned objects, one selected object, plain wrapped text and stretch-to-bounds images. Synthetic bold, bundled fonts, exact glyphs/metrics, adaptive Ribbon collapse, accessibility and rich text differ from PowerPoint. The active tab uses a thin brand-colored underline. Vector toolbar buttons retain native egui button focus/keyboard behavior and accessible labels; a headless test checks Enter and disabled activation. No cloud/account/sharing status is fabricated.
 
 ## Running-app captures
 
 Run `cargo run --locked -p breakfree-slides -- --ui-smoke <absolute_output_directory>` in an approved native desktop execution context. This opens the real application, builds an explicitly synthetic editable fixture, captures its actual rendered framebuffer and exits. It does not simulate a PowerPoint screenshot or certify manual pointer interactions. Ordinary `--new` starts with an empty deck; the fixture is only for the explicit smoke-test flag.
 
-Required captures: empty presentation, three slides, selected rectangle, in-object text editing, open formatting pane. An additional shared-renderer show capture is included. Capture links and actual dimensions/results are recorded after execution in [UI verification](UI_VERIFICATION.md).
+Required captures: empty presentation, three slides, selected rectangle, in-object text editing, open formatting pane. Additional shared-renderer show and 980 × 680 native window-resize captures are included. Capture links and actual dimensions/results are recorded after execution in [UI verification](UI_VERIFICATION.md).
 
 ## Comparison and verification matrix
 
