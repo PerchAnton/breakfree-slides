@@ -44,7 +44,6 @@ Every completed work report ends with the actual version and one of these explic
 | Decision date (Europe/Kyiv) | Scope | Version / status | Evidence |
 | :--- | :--- | :--- | :--- |
 | 2026-10-16 | Numbering policy and work-report requirement | Approved policy; exact current `0.1.0-alpha.1` awaits confirmation | Owner instruction in the current task; recorded in this policy and ADR 0002 |
-
 | 2026-10-16 | Mandatory version increment and changelog for every completed change | Routine increments authorized; `0.1.0-alpha.2` assigned, candidate acceptance pending | Owner amendment in the current task; supersedes the earlier per-increment preapproval requirement |
 
 ## Candidate and publication procedure

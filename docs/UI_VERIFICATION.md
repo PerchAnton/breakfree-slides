@@ -47,3 +47,9 @@ All seven current states were visually inspected after the Ribbon refinement. In
 | Merge / release | Neither performed; software/asset license decisions remain open |
 
 Next validation: approve a native Windows review environment, record the exact PowerPoint 2024 reference build/parameters in UI_SPEC, execute the DPI/resize/focus/keyboard/dialog/show matrix, then address measured layout differences and richer editing. A preserved model is necessary but does not establish full visual parity.
+
+## Version assignment follow-up — 2026-10-16
+
+Current binary identity is **0.1.0-alpha.2**, assigned under the owner's mandatory per-change increment rule. The earlier screenshots above were actually captured with alpha.1 and retain that provenance; no new GUI run is claimed for this identity-only update. The renderer, model and document/protocol versions are unchanged.
+
+Repeated locally for alpha.2: all 29 tests, locked workspace build, rustfmt and Clippy with warnings denied passed. Both workspace packages and Cargo.lock agree; actual `--version` and Office `app_version` output are `0.1.0-alpha.2`. New server CI status is tracked by exact commit in [the project log](PROJECT_LOG.md); earlier server evidence above remains historical. Candidate acceptance, merge and publication remain pending.
