@@ -1,0 +1,27 @@
+name: Feature or workflow proposal
+description: Suggest a presentation workflow or technical improvement.
+title: "[Proposal] "
+body:
+  - type: markdown
+    attributes:
+      value: "BreakFree Slides is at the planning stage. Use synthetic decks and redistributable assets. Do not attach confidential presentations."
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Smallest useful outcome
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Expected editing or presentation behavior
+  - type: textarea
+    id: context
+    attributes:
+      label: Alternatives and context
