@@ -39,7 +39,7 @@ All six states were visually inspected. Missing-glyph symbols on several initial
 | Native keyboard, focus and Save/Discard/Cancel interaction | **Not run manually**: Computer Use reported `Computer Use permissions are not granted`; unbundled executable also could not be selected as an app. Code paths exist; no successful manual claim |
 | Native resize, pointer drag/resize, open/save dialogs and fullscreen launch/exit | **Not run manually** for the same permission limitation. Show capture verifies content composition only |
 | PowerPoint 2024 measured comparison | **Not run**: installed Windows reference/build unavailable |
-| Server CI | Workflow added for Linux/Windows/macOS; local results do not establish server success. Check the PR for actual run status |
+| Server CI | Code commit `0694f99c15ad880dd3f4ef1081c4d621a6b1b379`: [PR run](https://github.com/PerchAnton/breakfree-slides/actions/runs/38876993449) and [push run](https://github.com/PerchAnton/breakfree-slides/actions/runs/38876986573) completed successfully, verified 2026-10-16 12:01 Europe/Kyiv. All three Linux/Windows/macOS jobs passed formatting, Clippy, tests, native build and headless capabilities. This does not establish native desktop/DPI acceptance. Documentation-only revisions are separate from this tested code SHA |
 | Merge / release | Neither performed; software/asset license decisions remain open |
 
 Next validation: approve a native Windows review environment, record the exact PowerPoint 2024 reference build/parameters in UI_SPEC, execute the DPI/resize/focus/keyboard/dialog/show matrix, then address measured layout differences and richer editing. A preserved model is necessary but does not establish full visual parity.

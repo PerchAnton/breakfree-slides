@@ -6,7 +6,7 @@ The application is standalone. Office, Docs, Sheets, Node.js, a web server and a
 
 Install stable Rust using [rustup](https://rust-lang.org/tools/install/), including rustfmt and Clippy. The prototype was tested with Rust 1.99.1 on Apple Silicon macOS. The eframe baseline requires Rust 1.88 or later; the minimum compiler has not been separately verified for the full locked dependency graph. Use Cargo.lock.
 
-Windows: use the MSVC Rust toolchain and Visual Studio Build Tools with **Desktop development with C++** and a Windows SDK. Native Windows compilation, file dialogs, fullscreen and DPI still require verification. macOS: Xcode Command Line Tools are needed. Linux: install native X11/Wayland/OpenGL development packages; the CI workflow lists them. Building requires initial crates.io access; editing, local files and presenting require no network access.
+Windows: use the MSVC Rust toolchain and Visual Studio Build Tools with **Desktop development with C++** and a Windows SDK. Windows compilation and headless tests passed in CI; native desktop file dialogs, fullscreen and DPI still require verification. macOS: Xcode Command Line Tools are needed. Linux: install native X11/Wayland/OpenGL development packages; the CI workflow lists them. Building requires initial crates.io access; editing, local files and presenting require no network access.
 
 ## Commands
 
@@ -44,7 +44,7 @@ macOS/Linux:
 
 Home/Insert adds editable text, rectangles and local PNG/JPEG/WebP images. Click to select, drag to move, use one of eight handles to resize, or open Format to edit geometry. Double-click text (or Enter/F2 on selection) to edit inside its bounds; leave focus or Ctrl/Cmd+Enter to commit, Escape to cancel the text draft. Use arrange controls to change stacking order. Add, duplicate, delete and reorder slides in the left rail; reordering currently uses Move Up/Down buttons.
 
-Ctrl/Cmd+Z undoes; Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y redoes. Ctrl/Cmd+M adds a slide; Ctrl/Cmd+D duplicates the current slide. The object clipboard supports Ctrl/Cmd+C/X/V within the deck. Save with Ctrl/Cmd+S or File, reopen through File/Ctrl/Cmd+O or `--open`. Native files embed imported image bytes. Save/Discard/Cancel guards new/open/close; canceled or failed saving does not execute the pending action.
+Ctrl/Cmd+Z undoes; Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y redoes. Ctrl/Cmd+M adds a slide; Ctrl/Cmd+D duplicates the selected object, or the current slide when no object is selected. The object clipboard supports Ctrl/Cmd+C/X/V within the deck. Save with Ctrl/Cmd+S or File, reopen through File/Ctrl/Cmd+O or `--open`. Native files embed imported image bytes. Save/Discard/Cancel guards new/open/close; canceled or failed saving does not execute the pending action.
 
 F5 starts at the beginning, Shift+F5 at the current slide. Arrows, PageUp/PageDown and Space navigate; Escape returns to editing. The show uses the same slide-content painter as editor and thumbnails. No transition is applied.
 
