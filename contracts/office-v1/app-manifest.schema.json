@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:breakfree:office:contracts:v1:app-manifest",
+  "title": "BreakFree executable capabilities, protocol v1",
+  "description": "A live executable response, never an instruction to locate or run an executable.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol_version", "app_id", "app_version", "display_name", "capabilities", "formats"],
+  "properties": {
+    "protocol_version": {"type": "integer", "const": 1},
+    "app_id": {"enum": ["breakfree.docs", "breakfree.sheets", "breakfree.slides"]},
+    "app_version": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[^\\s\\x00-\\x1f\\x7f]+$"},
+    "display_name": {"type": "string", "minLength": 1, "maxLength": 100, "pattern": "^[^\\x00-\\x1f\\x7f]+$"},
+    "capabilities": {
+      "type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true,
+      "items": {"enum": ["new", "open"]}
+    },
+    "formats": {
+      "type": "array", "maxItems": 64,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "extensions", "read", "write"],
+        "properties": {
+          "id": {"type": "string", "maxLength": 128, "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$"},
+          "extensions": {
+            "type": "array", "minItems": 1, "maxItems": 16, "uniqueItems": true,
+            "items": {"type": "string", "maxLength": 32, "pattern": "^[a-z0-9]+$"}
+          },
+          "read": {"type": "boolean"},
+          "write": {"type": "boolean"}
+        },
+        "anyOf": [
+          {"properties": {"read": {"const": true}}},
+          {"properties": {"write": {"const": true}}}
+        ]
+      }
+    }
+  }
+}

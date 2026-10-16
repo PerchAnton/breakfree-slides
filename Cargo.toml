@@ -1,0 +1,16 @@
+[workspace]
+members = ["crates/slides-core", "crates/slides-desktop"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0-alpha.3"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive", "rc"] }
+serde_json = "1.0"
+base64 = "0.22"
+image = { version = "=0.25.8", default-features = false, features = ["png", "jpeg", "webp"] }
+tempfile = "3.23"

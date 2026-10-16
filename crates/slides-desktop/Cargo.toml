@@ -1,0 +1,21 @@
+[package]
+name = "breakfree-slides"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+breakfree-slides-core = { path = "../slides-core" }
+eframe = { version = "=0.33.3", default-features = false, features = ["glow", "default_fonts", "accesskit", "x11", "wayland"] }
+rfd = "0.15"
+image.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+jsonschema = { version = "0.33", default-features = false }
+
+[[bin]]
+name = "breakfree-slides"
+path = "src/main.rs"

@@ -1,0 +1,13 @@
+{
+  "snapshot_version": 1,
+  "source_repository": "https://github.com/PerchAnton/breakfree-office",
+  "inspected_source_commit": "cfaaf419e84d9981acd421d130113ca2265061fd",
+  "upstream_contract_available": false,
+  "provenance": "Owner-provided protocol v1 fallback; contracts/v1 and ADRs absent at inspected source commit. Not an upstream-verified contract.",
+  "protocol_version": 1,
+  "app_id": "breakfree.slides",
+  "display_name": "BreakFree Slides",
+  "app_version_source": "CARGO_PKG_VERSION of the executable",
+  "native_format": {"id": "breakfree.slides.native", "extensions": ["bfslide"], "content_version": 1},
+  "launch": ["--new", "--open <absolute_path>", "--capabilities", "--version"]
+}

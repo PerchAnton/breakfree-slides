@@ -1,6 +1,6 @@
 # First milestones — edit, save and present
 
-**Proposed requirements; not implemented.** Milestone 1 verifies editing and persistence; milestone 2 adds basic presentation mode.
+**Acceptance requirements for the Rust prototype.** Model/editing/persistence and a shared-renderer show are implemented; automated results, native captures and incomplete GUI/platform acceptance are separated in [verification](UI_VERIFICATION.md). Milestone 1 verifies editing/persistence; milestone 2 adds presentation mode. A partial native GUI check is not completion of every acceptance scenario.
 
 ## User story
 
@@ -28,6 +28,8 @@ Slide list and canvas, text boxes, basic shapes, raster images, selection, movem
 ## Required decisions
 
 Specify coordinates and units, slide dimensions, text layout and font fallback, image embedding, native-format versioning and rendering consistency between edit and presentation modes. Record alternatives and limitations. Do not redistribute fonts without permission.
+
+Rust and the PowerPoint 2024 Windows desktop visual target are owner-approved requirements. The prototype's explicit units, IDs, image policy, format and shared rendering are in [ADR 0001](adr/0001-rust-native-editor.md); [UI_SPEC](UI_SPEC.md) defines the Ribbon workspace and honest reference/verification boundaries. The license remains undecided. This application must build and run independently of other BreakFree repositories.
 
 Do not execute macros, active embedded objects or imported scripts. Do not silently fetch remote assets or upload the deck.
 
