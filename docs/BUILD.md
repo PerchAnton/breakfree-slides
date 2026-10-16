@@ -44,6 +44,8 @@ macOS/Linux:
 
 Home/Insert adds editable text, rectangles and local PNG/JPEG/WebP images. Click to select, drag to move, use one of eight handles to resize, or open Format to edit geometry. Double-click text (or Enter/F2 on selection) to edit inside its bounds; leave focus or Ctrl/Cmd+Enter to commit, Escape to cancel the text draft. Use arrange controls to change stacking order. Add, duplicate, delete and reorder slides in the left rail; reordering currently uses Move Up/Down buttons.
 
+At narrower widths, Home groups collapse to buttons that open their actual commands. Ctrl+F1, the right Ribbon toggle or a supported-tab double-click switches between commands and tabs only. Formatting sections can collapse independently.
+
 Ctrl/Cmd+Z undoes; Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y redoes. Ctrl/Cmd+M adds a slide; Ctrl/Cmd+D duplicates the selected object, or the current slide when no object is selected. The object clipboard supports Ctrl/Cmd+C/X/V within the deck. Save with Ctrl/Cmd+S or File, reopen through File/Ctrl/Cmd+O or `--open`. Native files embed imported image bytes. Save/Discard/Cancel guards new/open/close; canceled or failed saving does not execute the pending action.
 
 F5 starts at the beginning, Shift+F5 at the current slide. Arrows, PageUp/PageDown and Space navigate; Escape returns to editing. The show uses the same slide-content painter as editor and thumbnails. No transition is applied.
@@ -54,6 +56,6 @@ F5 starts at the beginning, Shift+F5 at the current slide. Arrows, PageUp/PageDo
 cargo run --locked -p breakfree-slides -- --ui-smoke <absolute_output_directory>
 ```
 
-This explicit diagnostic opens the real application, constructs a synthetic editable three-slide fixture, captures seven framebuffer states and exits without saving the fixture as a user document. It is separate from ordinary launch behavior. See [UI_SPEC](UI_SPEC.md) and [UI verification](UI_VERIFICATION.md) for reference settings, captures, differences and unavailable checks. The final state programmatically resizes the actual native window to 980 × 680. Core/headless view-transform tests do not certify native Windows scaling.
+This explicit diagnostic opens the real application, constructs a synthetic editable three-slide fixture, captures ten framebuffer states and exits without saving the fixture as a user document. It is separate from ordinary launch behavior. See [UI_SPEC](UI_SPEC.md) and [UI verification](UI_VERIFICATION.md) for reference settings, captures, differences and unavailable checks. The later states resize the actual native window to 980 × 680 and 800 × 560, open a compact Home group, collapse the Ribbon and open formatting. Core/headless view-transform tests do not certify native Windows scaling.
 
 Not implemented: PPTX, themes/layouts, complex animations, multimedia, AI, cloud collaboration, arbitrary fonts, rich text, rotation, multi-selection and presenter tools. Unimplemented commands are disabled with explanatory hover text.

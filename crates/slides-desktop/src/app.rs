@@ -42,7 +42,7 @@ struct Capture {
     frames: u32,
     pending: bool,
 }
-const SHOTS: [&str; 7] = [
+const SHOTS: [&str; 10] = [
     "01-empty",
     "02-three-slides",
     "03-selection",
@@ -50,6 +50,9 @@ const SHOTS: [&str; 7] = [
     "05-format-pane",
     "06-slide-show",
     "07-narrow-window",
+    "08-group-popup",
+    "09-tabs-only",
+    "10-minimum-window",
 ];
 
 pub struct SlidesApp {
@@ -58,6 +61,8 @@ pub struct SlidesApp {
     slide: usize,
     selected: Option<Id>,
     tab: String,
+    ribbon_collapsed: bool,
+    ribbon_before_tab_click: bool,
     textures: Textures,
     logo: TextureHandle,
     format: bool,
@@ -137,6 +142,8 @@ impl SlidesApp {
             slide: 0,
             selected: None,
             tab: "Home".into(),
+            ribbon_collapsed: false,
+            ribbon_before_tab_click: false,
             textures: Textures::new(),
             logo,
             format: false,
@@ -399,6 +406,9 @@ impl SlidesApp {
         ctx.send_viewport_cmd(ViewportCommand::Fullscreen(false));
     }
     fn keyboard(&mut self, ctx: &Context) {
+        if !self.show && ctx.input_mut(|i| i.consume_key(Modifiers::CTRL, Key::F1)) {
+            self.ribbon_collapsed = !self.ribbon_collapsed;
+        }
         if self.show {
             let (exit, next, prev) = ctx.input(|i| {
                 (
@@ -421,7 +431,7 @@ impl SlidesApp {
             }
             return;
         }
-        if self.pending.is_some() {
+        if self.pending.is_some() || Popup::is_any_open(ctx) {
             return;
         }
         if ctx.input_mut(|i| i.consume_key(Modifiers::COMMAND, Key::S)) {
@@ -576,10 +586,11 @@ impl SlidesApp {
     }
     fn ribbon(&mut self, ctx: &Context) {
         TopBottomPanel::top("ribbon")
-            .exact_height(144.0)
+            .exact_height(if self.ribbon_collapsed { 38.0 } else { 144.0 })
             .frame(Frame::new().fill(Color32::from_gray(252)).inner_margin(Margin::symmetric(10, 2)))
             .show(ctx, |ui| {
-                ScrollArea::horizontal().id_salt("tabs").show(ui, |ui| {
+                let toggle_rect = Rect::from_min_size(pos2(ui.max_rect().right()-28.0,ui.cursor().top()),vec2(28.0,30.0));
+                ScrollArea::horizontal().max_width(ui.available_width()-34.0).id_salt("tabs").show(ui, |ui| {
                     ui.horizontal(|ui| {
                         if chrome::tab(ui, "File", self.tab == "File", true, true).clicked() {
                             self.finish_text(); self.tab = "File".into();
@@ -587,21 +598,28 @@ impl SlidesApp {
                         for name in &TABS[..11] {
                             let supported = matches!(*name, "Home" | "Insert" | "Slide Show" | "View" | "Help");
                             let r = chrome::tab(ui, name, self.tab == *name, supported, false);
-                            if r.clicked() { self.finish_text(); self.tab = (*name).into(); }
+                            if r.double_clicked() { self.finish_text(); self.tab=(*name).into(); self.ribbon_collapsed = !self.ribbon_before_tab_click; }
+                            else if r.clicked() { self.finish_text(); self.tab = (*name).into(); self.ribbon_before_tab_click=self.ribbon_collapsed; self.ribbon_collapsed=false; }
                             if !supported { r.on_disabled_hover_text("Not implemented: this tab's commands are not available yet."); }
                         }
                         if let Some(o) = self.selected.and_then(|id| self.editor.deck.object(self.slide, id)) {
                             let label = if matches!(o.content, Content::Image { .. }) { "Picture Format" } else { "Shape Format" };
                             if chrome::tab(ui, label, self.tab == "Format", true, true).clicked() {
-                                self.finish_text(); self.tab = "Format".into(); self.format = true;
+                                self.finish_text(); self.tab = "Format".into(); self.format = true; self.ribbon_collapsed=false;
                             }
                         }
                     });
                 });
+                ui.scope_builder(UiBuilder::new().max_rect(toggle_rect), |ui| {
+                    let (label,icon)=if self.ribbon_collapsed {("Expand Ribbon (Ctrl+F1)",Icon::Expand)}else{("Collapse Ribbon (Ctrl+F1)",Icon::Collapse)};
+                    if icon_button(ui,label,icon,true).clicked() { self.ribbon_collapsed = !self.ribbon_collapsed; }
+                });
+                if self.ribbon_collapsed { Popup::close_all(ctx); return; }
                 ui.separator();
+                let ribbon_width=ui.available_width();
                 ScrollArea::horizontal().id_salt("ribbon-commands").show(ui, |ui| {
                     ui.horizontal_top(|ui| match self.tab.as_str() {
-                        "Home" => self.home(ui),
+                        "Home" => self.home(ui, ribbon_width),
                         "Insert" => {
                             group(ui,"Slides",85.0,|ui| { if command(ui,"New Slide",Icon::Slide,true,true).clicked() { self.add_slide(); } });
                             group(ui,"Images",90.0,|ui| { if command(ui,"Pictures…",Icon::Picture,true,true).clicked() { self.add_image(); } });
@@ -636,201 +654,237 @@ impl SlidesApp {
                 });
             });
     }
-    fn home(&mut self, ui: &mut Ui) {
-        group(ui, "Clipboard", 157.0, |ui| {
-            ui.horizontal_top(|ui| {
-                if command(ui, "Paste", Icon::Paste, true, self.clipboard.is_some())
-                    .on_disabled_hover_text("Copy an object in this presentation first.")
-                    .clicked()
-                {
-                    self.paste();
-                }
-                ui.vertical(|ui| {
-                    if command(ui, "Cut", Icon::Cut, false, self.selected.is_some()).clicked() {
-                        self.copy(true);
-                    }
-                    if command(ui, "Copy", Icon::Copy, false, self.selected.is_some()).clicked() {
-                        self.copy(false);
-                    }
-                    command(ui, "Format Painter", Icon::Format, false, false)
-                        .on_disabled_hover_text("Copying formatting is not implemented.");
-                });
-            });
-        });
-        group(ui, "Slides", 166.0, |ui| {
-            ui.horizontal_top(|ui| {
-                if command(ui, "New Slide", Icon::Slide, true, true).clicked() {
-                    self.add_slide();
-                }
-                ui.vertical(|ui| {
-                    command(ui, "Layout", Icon::Layout, false, false).on_disabled_hover_text(
-                        "Slide layouts are not implemented. New Slide creates a blank slide.",
-                    );
-                    if command(ui, "Duplicate", Icon::Copy, false, true).clicked() {
-                        self.duplicate_slide();
-                    }
-                    if command(
-                        ui,
-                        "Delete",
-                        Icon::Delete,
-                        false,
-                        self.editor.deck.slides.len() > 1,
-                    )
-                    .clicked()
-                    {
-                        self.remove_slide();
-                    }
-                });
-            });
-        });
-        group(ui, "Font", 190.0, |ui| {
-            let text = self
-                .selected
-                .and_then(|id| self.editor.deck.object(self.slide, id))
-                .and_then(|o| {
-                    if let Content::Text {
-                        font_size,
-                        bold,
-                        color,
-                        ..
-                    } = o.content
-                    {
-                        Some((font_size, bold, color))
-                    } else {
-                        None
-                    }
-                });
-            ui.add_enabled_ui(text.is_some(), |ui| {
-                let (mut size, mut bold, mut color) =
-                    text.unwrap_or((24.0, false, [36, 32, 42, 255]));
-                ui.horizontal(|ui| {
-                    ui.add_enabled(
-                        false,
-                        Button::new("Bundled Sans").min_size(vec2(116.0, 23.0)),
-                    )
-                    .on_disabled_hover_text(
-                        "Fixed bundled fallback; system font selection is not implemented.",
-                    );
-                    if ui
-                        .add(DragValue::new(&mut size).range(4.0..=400.0).speed(1.0))
-                        .changed()
-                    {
-                        self.text_style(Some(size), None, None);
-                    }
-                });
-                ui.horizontal(|ui| {
-                    if ui
-                        .toggle_value(&mut bold, RichText::new("B").strong())
-                        .on_hover_text("Synthetic bold; shared renderer in edit and show")
-                        .changed()
-                    {
-                        self.text_style(None, Some(bold), None);
-                    }
-                    disabled(ui, "I", "Italic font face is not implemented.");
-                    disabled(ui, "U", "Underline is not implemented.");
-                    if ui
-                        .color_edit_button_srgba_unmultiplied(&mut color)
-                        .changed()
-                    {
-                        self.text_style(None, None, Some(color));
-                    }
-                });
-            });
-        });
-        group(ui, "Paragraph", 145.0, |ui| {
-            ui.horizontal(|ui| {
-                icon_button(ui, "Bullets — not implemented", Icon::List, false)
-                    .on_disabled_hover_text("Lists are not implemented.");
-                icon_button(
-                    ui,
-                    "Paragraph alignment — not implemented",
-                    Icon::Align,
-                    false,
-                )
-                .on_disabled_hover_text("Only left-aligned text is currently supported.");
-            });
-            command(ui, "Text Direction", Icon::Text, false, false)
-                .on_disabled_hover_text("Only horizontal text is implemented.");
-            command(ui, "Align Text", Icon::Align, false, false)
-                .on_disabled_hover_text("Only top-left text alignment is implemented.");
-        });
-        group(ui, "Drawing", 266.0, |ui| {
-            ui.horizontal_top(|ui| {
-                Frame::new()
-                    .stroke(Stroke::new(1.0_f32, chrome::LINE))
-                    .inner_margin(3)
-                    .show(ui, |ui| {
-                        ui.vertical(|ui| {
-                            if command(ui, "Text Box", Icon::Text, false, true).clicked() {
-                                self.add_text();
-                            }
-                            if command(ui, "Rectangle", Icon::Shape, false, true).clicked() {
-                                self.add_rectangle();
-                            }
-                            if command(ui, "Picture…", Icon::Picture, false, true).clicked() {
-                                self.add_image();
-                            }
+    fn home(&mut self, ui: &mut Ui, available_width: f32) {
+        let compact = chrome::compact_home_groups(available_width);
+        for (index, (label, width, icon)) in chrome::HOME_GROUPS.iter().enumerate() {
+            if compact[index] {
+                ui.push_id(label, |ui| {
+                    let response = command(ui, label, *icon, true, true);
+                    let center = response.rect.center_bottom() - vec2(0.0, 3.0);
+                    ui.painter().add(Shape::line(
+                        vec![center + vec2(-3.0, -2.0), center, center + vec2(3.0, -2.0)],
+                        Stroke::new(1.0_f32, chrome::INK),
+                    ));
+                    Popup::menu(&response)
+                        .id(eframe::egui::Id::new(("home-group-popup", index)))
+                        .close_behavior(PopupCloseBehavior::CloseOnClickOutside)
+                        .show(|ui| {
+                            ui.set_min_width(*width);
+                            ui.label(RichText::new(*label).strong());
+                            ui.separator();
+                            self.home_group(ui, index);
                         });
-                    });
-                ui.vertical(|ui| {
-                    if command(
-                        ui,
-                        "Format Selection",
-                        Icon::Format,
-                        false,
-                        self.selected.is_some(),
-                    )
-                    .clicked()
-                    {
-                        self.finish_text();
-                        self.format = true;
-                    }
-                    if command(
-                        ui,
-                        "Bring to Front",
-                        Icon::Front,
-                        false,
-                        self.selected.is_some(),
-                    )
-                    .clicked()
-                        && let Some(id) = self.selected
-                    {
-                        let r = self.editor.stack(self.slide, id, true);
-                        self.result(r);
-                    }
-                    if command(
-                        ui,
-                        "Send to Back",
-                        Icon::Back,
-                        false,
-                        self.selected.is_some(),
-                    )
-                    .clicked()
-                        && let Some(id) = self.selected
-                    {
-                        let r = self.editor.stack(self.slide, id, false);
-                        self.result(r);
-                    }
                 });
+                ui.separator();
+            } else {
+                Popup::close_id(ui.ctx(), eframe::egui::Id::new(("home-group-popup", index)));
+                group(ui, label, *width, |ui| self.home_group(ui, index));
+            }
+        }
+    }
+    fn home_group(&mut self, ui: &mut Ui, index: usize) {
+        match index {
+            0 => self.home_clipboard(ui),
+            1 => self.home_slides(ui),
+            2 => self.home_font(ui),
+            3 => self.home_paragraph(ui),
+            4 => self.home_drawing(ui),
+            5 => self.home_editing(ui),
+            _ => {}
+        }
+    }
+    fn home_clipboard(&mut self, ui: &mut Ui) {
+        ui.horizontal_top(|ui| {
+            if command(ui, "Paste", Icon::Paste, true, self.clipboard.is_some())
+                .on_disabled_hover_text("Copy an object in this presentation first.")
+                .clicked()
+            {
+                self.paste();
+            }
+            ui.vertical(|ui| {
+                if command(ui, "Cut", Icon::Cut, false, self.selected.is_some()).clicked() {
+                    self.copy(true);
+                }
+                if command(ui, "Copy", Icon::Copy, false, self.selected.is_some()).clicked() {
+                    self.copy(false);
+                }
+                command(ui, "Format Painter", Icon::Format, false, false)
+                    .on_disabled_hover_text("Copying formatting is not implemented.");
             });
         });
-        group(ui, "Editing", 100.0, |ui| {
-            command(ui, "Find", Icon::Find, false, false)
-                .on_disabled_hover_text("Text search is not implemented.");
-            command(ui, "Replace", Icon::Text, false, false)
-                .on_disabled_hover_text("Text replacement is not implemented.");
-            if command(
-                ui,
-                "Delete Object",
-                Icon::Delete,
-                false,
-                self.selected.is_some(),
-            )
-            .clicked()
-            {
-                self.remove_object();
+    }
+    fn home_slides(&mut self, ui: &mut Ui) {
+        ui.horizontal_top(|ui| {
+            if command(ui, "New Slide", Icon::Slide, true, true).clicked() {
+                self.add_slide();
             }
+            ui.vertical(|ui| {
+                command(ui, "Layout", Icon::Layout, false, false).on_disabled_hover_text(
+                    "Slide layouts are not implemented. New Slide creates a blank slide.",
+                );
+                if command(ui, "Duplicate", Icon::Copy, false, true).clicked() {
+                    self.duplicate_slide();
+                }
+                if command(
+                    ui,
+                    "Delete",
+                    Icon::Delete,
+                    false,
+                    self.editor.deck.slides.len() > 1,
+                )
+                .clicked()
+                {
+                    self.remove_slide();
+                }
+            });
         });
+    }
+    fn home_font(&mut self, ui: &mut Ui) {
+        let text = self
+            .selected
+            .and_then(|id| self.editor.deck.object(self.slide, id))
+            .and_then(|o| {
+                if let Content::Text {
+                    font_size,
+                    bold,
+                    color,
+                    ..
+                } = o.content
+                {
+                    Some((font_size, bold, color))
+                } else {
+                    None
+                }
+            });
+        ui.add_enabled_ui(text.is_some(), |ui| {
+            let (mut size, mut bold, mut color) = text.unwrap_or((24.0, false, [36, 32, 42, 255]));
+            ui.horizontal(|ui| {
+                ui.add_enabled(
+                    false,
+                    Button::new("Bundled Sans").min_size(vec2(116.0, 23.0)),
+                )
+                .on_disabled_hover_text(
+                    "Fixed bundled fallback; system font selection is not implemented.",
+                );
+                if ui
+                    .add(DragValue::new(&mut size).range(4.0..=400.0).speed(1.0))
+                    .changed()
+                {
+                    self.text_style(Some(size), None, None);
+                }
+            });
+            ui.horizontal(|ui| {
+                if ui
+                    .toggle_value(&mut bold, RichText::new("B").strong())
+                    .on_hover_text("Synthetic bold; shared renderer in edit and show")
+                    .changed()
+                {
+                    self.text_style(None, Some(bold), None);
+                }
+                disabled(ui, "I", "Italic font face is not implemented.");
+                disabled(ui, "U", "Underline is not implemented.");
+                if ui
+                    .color_edit_button_srgba_unmultiplied(&mut color)
+                    .changed()
+                {
+                    self.text_style(None, None, Some(color));
+                }
+            });
+        });
+    }
+    fn home_paragraph(&mut self, ui: &mut Ui) {
+        ui.horizontal(|ui| {
+            icon_button(ui, "Bullets — not implemented", Icon::List, false)
+                .on_disabled_hover_text("Lists are not implemented.");
+            icon_button(
+                ui,
+                "Paragraph alignment — not implemented",
+                Icon::Align,
+                false,
+            )
+            .on_disabled_hover_text("Only left-aligned text is currently supported.");
+        });
+        command(ui, "Text Direction", Icon::Text, false, false)
+            .on_disabled_hover_text("Only horizontal text is implemented.");
+        command(ui, "Align Text", Icon::Align, false, false)
+            .on_disabled_hover_text("Only top-left text alignment is implemented.");
+    }
+    fn home_drawing(&mut self, ui: &mut Ui) {
+        ui.horizontal_top(|ui| {
+            Frame::new()
+                .stroke(Stroke::new(1.0_f32, chrome::LINE))
+                .inner_margin(3)
+                .show(ui, |ui| {
+                    ui.vertical(|ui| {
+                        if command(ui, "Text Box", Icon::Text, false, true).clicked() {
+                            self.add_text();
+                        }
+                        if command(ui, "Rectangle", Icon::Shape, false, true).clicked() {
+                            self.add_rectangle();
+                        }
+                        if command(ui, "Picture…", Icon::Picture, false, true).clicked() {
+                            self.add_image();
+                        }
+                    });
+                });
+            ui.vertical(|ui| {
+                if command(
+                    ui,
+                    "Format Selection",
+                    Icon::Format,
+                    false,
+                    self.selected.is_some(),
+                )
+                .clicked()
+                {
+                    self.finish_text();
+                    self.format = true;
+                }
+                if command(
+                    ui,
+                    "Bring to Front",
+                    Icon::Front,
+                    false,
+                    self.selected.is_some(),
+                )
+                .clicked()
+                    && let Some(id) = self.selected
+                {
+                    let r = self.editor.stack(self.slide, id, true);
+                    self.result(r);
+                }
+                if command(
+                    ui,
+                    "Send to Back",
+                    Icon::Back,
+                    false,
+                    self.selected.is_some(),
+                )
+                .clicked()
+                    && let Some(id) = self.selected
+                {
+                    let r = self.editor.stack(self.slide, id, false);
+                    self.result(r);
+                }
+            });
+        });
+    }
+    fn home_editing(&mut self, ui: &mut Ui) {
+        command(ui, "Find", Icon::Find, false, false)
+            .on_disabled_hover_text("Text search is not implemented.");
+        command(ui, "Replace", Icon::Text, false, false)
+            .on_disabled_hover_text("Text replacement is not implemented.");
+        if command(
+            ui,
+            "Delete Object",
+            Icon::Delete,
+            false,
+            self.selected.is_some(),
+        )
+        .clicked()
+        {
+            self.remove_object();
+        }
     }
     fn text_style(&mut self, size: Option<f64>, weight: Option<bool>, new_color: Option<[u8; 4]>) {
         self.finish_text();
@@ -1070,96 +1124,116 @@ impl SlidesApp {
                             .cloned()
                         {
                             ui.add_space(10.0);
-                            ui.label(RichText::new("Size & Properties").strong());
-                            ui.add_space(8.0);
-                            let mut b = o.bounds;
-                            let mut changed = false;
-                            Grid::new("geometry")
-                                .num_columns(2)
-                                .spacing([12.0, 12.0])
+                            CollapsingHeader::new("Size & Position")
+                                .default_open(true)
+                                .id_salt("format-geometry")
                                 .show(ui, |ui| {
-                                    for (label, value) in [
-                                        ("Horizontal", &mut b.x),
-                                        ("Vertical", &mut b.y),
-                                        ("Width", &mut b.w),
-                                        ("Height", &mut b.h),
-                                    ] {
-                                        ui.label(label);
-                                        changed |= ui
-                                            .add(DragValue::new(value).speed(1.0).suffix(" u"))
-                                            .changed();
-                                        ui.end_row();
-                                    }
-                                });
-                            if changed {
-                                b.w = b.w.max(1.0);
-                                b.h = b.h.max(1.0);
-                                let r = self.editor.transform(self.slide, o.id, b);
-                                self.result(r);
-                            }
-                            ui.add_space(18.0);
-                            ui.separator();
-                            ui.label(RichText::new("Fill & Text").strong());
-                            match o.content {
-                                Content::Rectangle { mut fill } => {
-                                    if ui.color_edit_button_srgba_unmultiplied(&mut fill).changed()
-                                    {
-                                        let index = self.slide;
-                                        let r = self.editor.apply(|d| {
-                                            d.object_mut(index, o.id)?.content =
-                                                Content::Rectangle { fill };
-                                            Ok(())
+                                    let mut b = o.bounds;
+                                    let mut changed = false;
+                                    Grid::new("geometry")
+                                        .num_columns(2)
+                                        .spacing([12.0, 12.0])
+                                        .show(ui, |ui| {
+                                            for (label, value) in [
+                                                ("Horizontal", &mut b.x),
+                                                ("Vertical", &mut b.y),
+                                                ("Width", &mut b.w),
+                                                ("Height", &mut b.h),
+                                            ] {
+                                                ui.label(label);
+                                                changed |= ui
+                                                    .add(
+                                                        DragValue::new(value)
+                                                            .speed(1.0)
+                                                            .suffix(" u"),
+                                                    )
+                                                    .changed();
+                                                ui.end_row();
+                                            }
                                         });
+                                    if changed {
+                                        b.w = b.w.max(1.0);
+                                        b.h = b.h.max(1.0);
+                                        let r = self.editor.transform(self.slide, o.id, b);
                                         self.result(r);
                                     }
-                                }
-                                Content::Text {
-                                    mut font_size,
-                                    mut bold,
-                                    mut color,
-                                    ..
-                                } => {
-                                    if ui
-                                        .add(
-                                            DragValue::new(&mut font_size)
-                                                .range(4.0..=400.0)
-                                                .suffix(" u"),
-                                        )
-                                        .changed()
-                                    {
-                                        self.text_style(Some(font_size), None, None);
-                                    }
-                                    if ui.checkbox(&mut bold, "Synthetic bold").changed() {
-                                        self.text_style(None, Some(bold), None);
-                                    }
-                                    if ui
-                                        .color_edit_button_srgba_unmultiplied(&mut color)
-                                        .changed()
-                                    {
-                                        self.text_style(None, None, Some(color));
-                                    }
-                                }
-                                Content::Image { .. } => {
-                                    ui.label("Embedded picture");
-                                    disabled(
-                                        ui,
-                                        "Crop / Effects",
-                                        "Image cropping and effects are not implemented.",
-                                    );
-                                }
-                            }
-                            ui.add_space(18.0);
+                                });
+                            ui.add_space(8.0);
                             ui.separator();
-                            ui.label(RichText::new("Arrange").strong());
-                            for (label, icon, front) in [
-                                ("Bring to Front", Icon::Front, true),
-                                ("Send to Back", Icon::Back, false),
-                            ] {
-                                if command(ui, label, icon, false, true).clicked() {
-                                    let r = self.editor.stack(self.slide, o.id, front);
-                                    self.result(r);
-                                }
-                            }
+                            let heading = match o.content {
+                                Content::Text { .. } => "Text Options",
+                                Content::Rectangle { .. } => "Fill",
+                                Content::Image { .. } => "Picture",
+                            };
+                            CollapsingHeader::new(heading)
+                                .default_open(true)
+                                .id_salt("format-content")
+                                .show(ui, |ui| match o.content {
+                                    Content::Rectangle { mut fill } => {
+                                        if ui
+                                            .color_edit_button_srgba_unmultiplied(&mut fill)
+                                            .changed()
+                                        {
+                                            let index = self.slide;
+                                            let r = self.editor.apply(|d| {
+                                                d.object_mut(index, o.id)?.content =
+                                                    Content::Rectangle { fill };
+                                                Ok(())
+                                            });
+                                            self.result(r);
+                                        }
+                                    }
+                                    Content::Text {
+                                        mut font_size,
+                                        mut bold,
+                                        mut color,
+                                        ..
+                                    } => {
+                                        if ui
+                                            .add(
+                                                DragValue::new(&mut font_size)
+                                                    .range(4.0..=400.0)
+                                                    .suffix(" u"),
+                                            )
+                                            .changed()
+                                        {
+                                            self.text_style(Some(font_size), None, None);
+                                        }
+                                        if ui.checkbox(&mut bold, "Synthetic bold").changed() {
+                                            self.text_style(None, Some(bold), None);
+                                        }
+                                        if ui
+                                            .color_edit_button_srgba_unmultiplied(&mut color)
+                                            .changed()
+                                        {
+                                            self.text_style(None, None, Some(color));
+                                        }
+                                    }
+                                    Content::Image { .. } => {
+                                        ui.label("Embedded picture");
+                                        disabled(
+                                            ui,
+                                            "Crop / Effects",
+                                            "Image cropping and effects are not implemented.",
+                                        );
+                                    }
+                                });
+                            ui.add_space(8.0);
+                            ui.separator();
+                            CollapsingHeader::new("Arrange")
+                                .default_open(true)
+                                .id_salt("format-arrange")
+                                .show(ui, |ui| {
+                                    for (label, icon, front) in [
+                                        ("Bring to Front", Icon::Front, true),
+                                        ("Send to Back", Icon::Back, false),
+                                    ] {
+                                        if command(ui, label, icon, false, true).clicked() {
+                                            let r = self.editor.stack(self.slide, o.id, front);
+                                            self.result(r);
+                                        }
+                                    }
+                                });
                             ui.add_space(12.0);
                             ui.small("Position and size use slide units.");
                         } else {
@@ -1552,6 +1626,19 @@ impl SlidesApp {
                 5 => {
                     self.show = true;
                 }
+                7 => {
+                    Popup::open_id(ctx, eframe::egui::Id::new(("home-group-popup", 4usize)));
+                }
+                8 => {
+                    Popup::close_all(ctx);
+                    self.ribbon_collapsed = true;
+                }
+                9 => {
+                    self.ribbon_collapsed = false;
+                    ctx.send_viewport_cmd(ViewportCommand::InnerSize(vec2(800.0, 560.0)));
+                    self.selected = self.editor.deck.slides[0].objects.first().map(|o| o.id);
+                    self.format = true;
+                }
                 6 => {
                     ctx.send_viewport_cmd(ViewportCommand::InnerSize(vec2(980.0, 680.0)));
                     self.tab = "Home".into();
@@ -1825,6 +1912,173 @@ mod tests {
             s.notes = note.into();
         }
         SlidesApp::with_context(&Context::default(), e.deck, None, None)
+    }
+    #[test]
+    fn ribbon_toggle_and_open_popup_do_not_edit_or_delete_slide_content() {
+        let ctx = Context::default();
+        let deck = demo_deck();
+        let mut app = SlidesApp::with_context(&ctx, deck.clone(), None, None);
+        app.selected = Some(deck.slides[0].objects[0].id);
+        let _ = ctx.run(
+            RawInput {
+                modifiers: Modifiers::CTRL,
+                events: vec![Event::Key {
+                    key: Key::F1,
+                    physical_key: None,
+                    pressed: true,
+                    repeat: false,
+                    modifiers: Modifiers::CTRL,
+                }],
+                ..Default::default()
+            },
+            |ctx| app.keyboard(ctx),
+        );
+        assert!(app.ribbon_collapsed);
+        assert_eq!(app.editor.deck, deck);
+        app.ribbon_collapsed = false;
+        Popup::open_id(&ctx, eframe::egui::Id::new(("home-group-popup", 4usize)));
+        let _ = ctx.run(
+            RawInput {
+                events: vec![Event::Key {
+                    key: Key::Delete,
+                    physical_key: None,
+                    pressed: true,
+                    repeat: false,
+                    modifiers: Modifiers::NONE,
+                }],
+                ..Default::default()
+            },
+            |ctx| app.keyboard(ctx),
+        );
+        assert_eq!(
+            app.editor.deck, deck,
+            "Delete while a Ribbon popup owns input must not delete a canvas object"
+        );
+    }
+
+    #[test]
+    fn double_clicking_a_tab_toggles_from_either_initial_state() {
+        for initially_collapsed in [false, true] {
+            let ctx = Context::default();
+            let mut app = SlidesApp::with_context(&ctx, Deck::new(), None, None);
+            app.ribbon_collapsed = initially_collapsed;
+            let draw = |app: &mut SlidesApp, time: f64, events: Vec<Event>| {
+                ctx.run(
+                    RawInput {
+                        screen_rect: Some(Rect::from_min_size(Pos2::ZERO, vec2(1440.0, 815.0))),
+                        time: Some(time),
+                        events,
+                        ..Default::default()
+                    },
+                    |ctx| app.ribbon(ctx),
+                )
+            };
+            let out = draw(&mut app, 0.0, vec![]);
+            let pos = out
+                .shapes
+                .iter()
+                .find_map(|s| {
+                    if let Shape::Text(t) = &s.shape {
+                        (t.galley.job.text == "Home").then_some(t.pos + t.galley.size() / 2.0)
+                    } else {
+                        None
+                    }
+                })
+                .unwrap();
+            for (time, pressed) in [(0.1, true), (0.15, false), (0.2, true), (0.25, false)] {
+                let _ = draw(
+                    &mut app,
+                    time,
+                    vec![
+                        Event::PointerMoved(pos),
+                        Event::PointerButton {
+                            pos,
+                            button: PointerButton::Primary,
+                            pressed,
+                            modifiers: Modifiers::NONE,
+                        },
+                    ],
+                );
+            }
+            assert_eq!(app.ribbon_collapsed, !initially_collapsed);
+            assert_eq!(app.editor.deck.slides[0].objects.len(), 0);
+        }
+    }
+
+    #[test]
+    fn compact_drawing_popup_creates_an_undoable_real_rectangle() {
+        let ctx = Context::default();
+        let mut app = SlidesApp::with_context(&ctx, Deck::new(), None, None);
+        let original = app.editor.deck.clone();
+        let popup = eframe::egui::Id::new(("home-group-popup", 4usize));
+        let draw = |ctx: &Context, app: &mut SlidesApp, events: Vec<Event>| {
+            ctx.run(
+                RawInput {
+                    screen_rect: Some(Rect::from_min_size(Pos2::ZERO, vec2(980.0, 680.0))),
+                    events,
+                    ..Default::default()
+                },
+                |ctx| app.ribbon(ctx),
+            )
+        };
+        let _ = draw(&ctx, &mut app, vec![]);
+        Popup::open_id(&ctx, popup);
+        let _ = draw(&ctx, &mut app, vec![]);
+        let out = draw(&ctx, &mut app, vec![]);
+        let pos = out
+            .shapes
+            .iter()
+            .find_map(|s| {
+                if let Shape::Text(t) = &s.shape {
+                    (t.galley.job.text == "Rectangle").then_some(t.pos + t.galley.size() / 2.0)
+                } else {
+                    None
+                }
+            })
+            .expect("Rectangle command must be reachable in the compact popup");
+        let _ = draw(
+            &ctx,
+            &mut app,
+            vec![
+                Event::PointerMoved(pos),
+                Event::PointerButton {
+                    pos,
+                    button: PointerButton::Primary,
+                    pressed: true,
+                    modifiers: Modifiers::NONE,
+                },
+            ],
+        );
+        let _ = draw(
+            &ctx,
+            &mut app,
+            vec![Event::PointerButton {
+                pos,
+                button: PointerButton::Primary,
+                pressed: false,
+                modifiers: Modifiers::NONE,
+            }],
+        );
+        assert_eq!(app.editor.deck.slides[0].objects.len(), 1);
+        assert!(matches!(
+            app.editor.deck.slides[0].objects[0].content,
+            Content::Rectangle { .. }
+        ));
+        app.history(false);
+        assert_eq!(app.editor.deck, original);
+        app.history(true);
+        assert_eq!(app.editor.deck.slides[0].objects.len(), 1);
+        let _ = ctx.run(
+            RawInput {
+                screen_rect: Some(Rect::from_min_size(Pos2::ZERO, vec2(1440.0, 815.0))),
+                ..Default::default()
+            },
+            |ctx| app.ribbon(ctx),
+        );
+        assert!(
+            !Popup::is_id_open(&ctx, popup),
+            "Expanding a group must dismiss its old popup"
+        );
     }
     #[test]
     fn resizing_workspace_and_opening_panes_preserves_the_document() {

@@ -71,7 +71,7 @@ A future compatibility matrix must describe unsupported elements and font substi
 | Area | Current position |
 | :--- | :--- |
 | Product direction | Documented |
-| Current application version | `0.1.0-alpha.2` — assigned under the mandatory increment rule; awaiting candidate acceptance; first public product release planned as `0.2.0` |
+| Current application version | `0.1.0-alpha.3` — assigned under the mandatory increment rule; awaiting candidate acceptance; first public product release planned as `0.2.0` |
 | Implementation language and UI toolkit | Rust required by the owner; native egui/eframe prototype proposed for review |
 | Slide model and native deck format | Editable objects in logical slide units; versioned `.bfslide` JSON with embedded raster bytes |
 | Windows, macOS and Linux | Native targets; local build/captures on macOS, Windows/DPI and other platform evidence still pending |

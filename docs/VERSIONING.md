@@ -6,12 +6,14 @@ Status: owner-approved numbering policy, recorded 2026-10-16 (Europe/Kyiv). See 
 
 | Field | Value |
 | :--- | :--- |
-| Actual application version | `0.1.0-alpha.2` |
+| Actual application version | `0.1.0-alpha.3` |
 | Owner approval of this exact version | Increment authorized by standing owner instruction; candidate acceptance pending |
 | Published product release | None |
 | First public release target | `0.2.0` (short form: 0.2), subject to separate owner approval and publication authorization |
 
 The owner amended the rule on 2026-10-16: every completed logical change must increment the version and update the changelog. `0.1.0-alpha.2` identifies the completed desktop workspace refinement and this policy correction. Historical `alpha.1` captures and test reports retain their actual recorded version. A routine increment is authorized; acceptance of the candidate and readiness for release remain separate.
+
+The owner accepted `0.1.0-alpha.2` on 2026-10-16. The next adaptive Ribbon and formatting-pane change is assigned `0.1.0-alpha.3`, awaiting its own candidate acceptance.
 
 ## Numbering
 
@@ -45,6 +47,7 @@ Every completed work report ends with the actual version and one of these explic
 | :--- | :--- | :--- | :--- |
 | 2026-10-16 | Numbering policy and work-report requirement | Approved policy; exact current `0.1.0-alpha.1` awaits confirmation | Owner instruction in the current task; recorded in this policy and ADR 0002 |
 | 2026-10-16 | Mandatory version increment and changelog for every completed change | Routine increments authorized; `0.1.0-alpha.2` assigned, candidate acceptance pending | Owner amendment in the current task; supersedes the earlier per-increment preapproval requirement |
+| 2026-10-16 | Candidate acceptance | `0.1.0-alpha.2` accepted; `0.1.0-alpha.3` assigned for the next change, acceptance pending | Explicit owner decision in this task; no merge or release authorization |
 
 ## Candidate and publication procedure
 

@@ -10,7 +10,7 @@ The native Rust prototype already reports `0.1.0-alpha.1`. The owner requires ev
 
 ## Decision
 
-Use `0.1.0-alpha.N`, `0.1.0-beta.N` and `0.1.0-rc.N` for the initial development cycle. Use Cargo-compatible `0.2.0` for the first separately authorized public product release. Owner amendment on 2026-10-16 requires a counter increment and changelog entry for every completed logical change. The current assignment is `0.1.0-alpha.2`; candidate acceptance remains pending.
+Use `0.1.0-alpha.N`, `0.1.0-beta.N` and `0.1.0-rc.N` for the initial development cycle. Use Cargo-compatible `0.2.0` for the first separately authorized public product release. Owner amendment on 2026-10-16 requires a counter increment and changelog entry for every completed logical change. The owner subsequently accepted `0.1.0-alpha.2` on 2026-10-16. The next assignment is `0.1.0-alpha.3`; acceptance of this new candidate remains pending.
 
 Keep root workspace Cargo version as the single runtime source, inherited by both crates and emitted by the binary and Office manifest. Keep application versions independent from native content and Office protocol versions. Maintain an unreleased changelog and an explicit approval record in [VERSIONING.md](../VERSIONING.md).
 

@@ -7,6 +7,8 @@ pub const LINE: Color32 = Color32::from_rgb(216, 216, 216);
 
 #[derive(Clone, Copy)]
 pub enum Icon {
+    Expand,
+    Collapse,
     Save,
     Undo,
     Redo,
@@ -53,6 +55,17 @@ pub fn glyph(p: &Painter, r: Rect, icon: Icon, color: Color32) {
         );
     };
     match icon {
+        Icon::Expand | Icon::Collapse => {
+            let y = if matches!(icon, Icon::Expand) {
+                15.0
+            } else {
+                9.0
+            };
+            p.add(Shape::line(
+                vec![pt(5., 24. - y), pt(12., y), pt(19., 24. - y)],
+                stroke,
+            ));
+        }
         Icon::Save => {
             rect((4., 3.), (20., 21.));
             rect((8., 3.), (16., 10.));
@@ -288,6 +301,29 @@ pub fn tab(ui: &mut Ui, label: &str, selected: bool, enabled: bool, accent: bool
     r
 }
 
+pub const HOME_GROUPS: [(&str, f32, Icon); 6] = [
+    ("Clipboard", 157.0, Icon::Paste),
+    ("Slides", 166.0, Icon::Slide),
+    ("Font", 190.0, Icon::Text),
+    ("Paragraph", 145.0, Icon::Align),
+    ("Drawing", 266.0, Icon::Shape),
+    ("Editing", 100.0, Icon::Find),
+];
+
+pub fn compact_home_groups(available_width: f32) -> [bool; 6] {
+    let mut compact = [false; 6];
+    let mut width: f32 = HOME_GROUPS.iter().map(|(_, w, _)| w + 16.0).sum();
+    // Retain slide and font tools longest. A small reserve covers theme spacing.
+    for index in [5, 3, 4, 0, 2, 1] {
+        if width + 24.0 <= available_width {
+            break;
+        }
+        compact[index] = true;
+        width -= HOME_GROUPS[index].1 - 82.0;
+    }
+    compact
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -323,3 +359,5 @@ mod tests {
         }
     }
 }
+
+// Dimensions are app layout choices, not measurements of an installed Office build.

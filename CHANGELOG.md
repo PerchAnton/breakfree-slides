@@ -2,9 +2,20 @@
 
 Follow [the version and approval policy](docs/VERSIONING.md). Entries below describe source work; a published product release requires its own date, tag, immutable commit and artifacts.
 
-## Unreleased — 0.1.0-alpha.2 (2026-10-16)
+## Unreleased — 0.1.0-alpha.3 (2026-10-16)
 
-Routine increment authorized by the owner's per-change rule; candidate acceptance pending. First public product release remains `0.2.0`, subject to separate authorization.
+Candidate acceptance pending. Previous candidate `0.1.0-alpha.2` accepted by the owner on 2026-10-16; no merge or product release authorized.
+
+### Changed
+
+- Home groups progressively collapse into anchored command popups as the window narrows; compact and expanded groups share the same actions.
+- Ribbon can collapse to tabs using Ctrl+F1, a display toggle or a double-click on a supported tab. Selecting a supported tab expands its commands.
+- Formatting properties are organized into collapsible Size & Position, Fill/Text/Picture and Arrange sections.
+- Native capture coverage adds compact Drawing commands, tabs-only mode and the 800 × 560 minimum window with formatting open.
+
+## 0.1.0-alpha.2 — accepted development candidate (2026-10-16, not released)
+
+Accepted by the owner on 2026-10-16. First public product release remains `0.2.0`, subject to separate authorization.
 
 ### Changed
 
