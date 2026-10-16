@@ -85,7 +85,7 @@ cargo test --workspace --locked
 cargo run --locked -p breakfree-slides -- --new
 ```
 
-See [Windows and other native launch instructions](docs/BUILD.md), [the owner-approved Rust direction and architecture](docs/adr/0001-rust-native-editor.md), [UI reference parameters](docs/UI_SPEC.md), [actual captures and verification limits](docs/UI_VERIFICATION.md), and [dependency/font notices](docs/DEPENDENCIES.md). `--capabilities` emits JSON without starting the GUI; `--version` reports the build version. Office integration uses an explicitly unverified local fallback snapshot until an upstream contract is published.
+See [Windows and other native launch instructions](docs/BUILD.md), [the owner-approved Rust direction and architecture](docs/adr/0001-rust-native-editor.md), [UI reference parameters](docs/UI_SPEC.md), [actual captures and verification limits](docs/UI_VERIFICATION.md), and [dependency/font notices](docs/DEPENDENCIES.md). `--capabilities` emits JSON without starting the GUI; `--version` reports the build version. The adapter is tested against a [pinned Office v1 candidate](contracts/office-v1/README.md), with unmerged status and the original fallback provenance documented.
 
 ## The BreakFree family
 

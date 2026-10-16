@@ -44,7 +44,7 @@ struct Capabilities<'a> {
     app_id: &'a str,
     app_version: &'a str,
     display_name: &'a str,
-    capabilities: [&'a str; 5],
+    capabilities: [&'a str; 2],
     formats: [Format<'a>; 1],
 }
 pub fn capabilities(version: &str) -> String {
@@ -53,7 +53,7 @@ pub fn capabilities(version: &str) -> String {
         app_id: "breakfree.slides",
         app_version: version,
         display_name: "BreakFree Slides",
-        capabilities: ["new", "open", "edit", "save", "present"],
+        capabilities: ["new", "open"],
         formats: [Format {
             id: "breakfree.slides.native",
             extensions: ["bfslide"],

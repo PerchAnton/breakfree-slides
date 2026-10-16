@@ -8,6 +8,15 @@ fn capabilities_are_clean_json_without_gui_startup() {
     let v: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap();
     assert_eq!(v["app_version"], env!("CARGO_PKG_VERSION"));
     assert_eq!(v["app_id"], "breakfree.slides");
+    let schema: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../contracts/office-v1/app-manifest.schema.json"
+    ))
+    .unwrap();
+    let validator = jsonschema::validator_for(&schema).unwrap();
+    validator
+        .validate(&v)
+        .expect("Actual CLI output must conform to pinned Office v1 schema");
+    assert_eq!(v["capabilities"], serde_json::json!(["new", "open"]));
 }
 #[test]
 fn version_exits_without_gui() {
@@ -15,7 +24,7 @@ fn version_exits_without_gui() {
     assert!(out.status.success());
     assert_eq!(
         String::from_utf8(out.stdout).unwrap().trim(),
-        format!("breakfree-slides {}", env!("CARGO_PKG_VERSION"))
+        env!("CARGO_PKG_VERSION")
     );
 }
 #[test]

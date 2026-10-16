@@ -12,3 +12,5 @@ Dependency source packages retain their own manifests/license notices in the Car
 - [Emoji icon font MIT notice](third-party/fonts/emoji-icon-font-mit-license.txt)
 
 Sources: epaint_default_fonts 0.33.3, files under its `fonts/` directory, copied without modification. Application text currently uses bundled proportional/fallback faces; arbitrary font selection and PowerPoint font fidelity are not claimed. Synthetic bold is applied by the shared painter. No remote font download occurs. Review the complete transitive license/notice inventory and the owner's software/asset license decisions before redistributing binaries.
+
+The Rust `jsonschema` dependency is test-only, with default features disabled: actual CLI output is checked against the committed Office schema without enabling HTTP or file resolvers. It is not a runtime dependency of the editor.

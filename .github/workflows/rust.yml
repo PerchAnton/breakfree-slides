@@ -1,5 +1,9 @@
 name: Rust prototype
-on: [push, pull_request]
+on:
+  push:
+    paths: ['Cargo.toml', 'Cargo.lock', 'crates/**', 'contracts/**', 'docs/brand/**', '.github/workflows/rust.yml']
+  pull_request:
+    paths: ['Cargo.toml', 'Cargo.lock', 'crates/**', 'contracts/**', 'docs/brand/**', '.github/workflows/rust.yml']
 permissions:
   contents: read
 jobs:

@@ -19,7 +19,7 @@ fn run() -> Result<(), String> {
             return Ok(());
         }
         Launch::Version => {
-            println!("breakfree-slides {}", env!("CARGO_PKG_VERSION"));
+            println!("{}", env!("CARGO_PKG_VERSION"));
             return Ok(());
         }
         _ => {}

@@ -10,7 +10,7 @@ Use an independent Cargo workspace: `breakfree-slides-core` has no GUI dependenc
 
 ## Model and editing
 
-Slides use independent logical units: default 1280 × 720, origin at top left, x right, y down. Geometry uses finite f64 coordinates; device pixels and view zoom are separate transforms. Objects are axis-aligned text, rectangles or embedded raster images. Vector order defines stacking, back to front. Nonzero monotonic document-local u64 IDs identify slides, objects and assets in one namespace. Duplicate slides receive fresh object/slide IDs and share immutable resources.
+Slides use independent logical units: default 1280 × 720, origin at top left, x right, y down. Geometry and font sizes use finite logical slide units; device pixels, physical print points and view zoom are separate concepts. Objects are axis-aligned text, rectangles or embedded raster images. Vector order defines stacking, back to front. Nonzero monotonic document-local u64 IDs identify slides, objects and assets in one namespace. Duplicate slides receive fresh object/slide IDs and share immutable resources.
 
 Commands edit a candidate deck, validate it and replace the current model only on success. Undo/redo stores up to 32 document snapshots with shared immutable image allocations. A pointer gesture commits once on release; in-object text commits when focus leaves or Ctrl/Cmd+Enter, and Escape cancels the text draft. Dirty state compares to the last successfully saved model, so undo can return to the saved state. The UI resolves Save / Discard / Cancel before replacing or closing a dirty document; canceling Save As keeps the pending action unexecuted.
 
@@ -28,7 +28,9 @@ This iteration uses egui's bundled proportional font with bundled fallback glyph
 
 ## Office boundary
 
-At inspection, `PerchAnton/breakfree-office` commit `cfaaf419e84d9981acd421d130113ca2265061fd` had no `contracts/v1/` or ADR files. The local [contract snapshot](../../contracts/office-v1-baseline.json) therefore records the owner-provided fallback and explicitly marks upstream verification unavailable. The standalone executable provides `--new`, `--open <absolute_path>`, `--capabilities` (JSON stdout without starting a GUI), and `--version`. Capabilities advertise only native editing/save/present actions; no PPTX support. Reconcile the adapter when a versioned upstream contract is available, without a runtime dependency on mutable main.
+Initially, Office main at `cfaaf419e84d9981acd421d130113ca2265061fd` had no contracts; the [owner fallback snapshot](../../contracts/office-v1-baseline.json) preserves that provenance. During implementation, Office draft PR #2 published protocol v1 and a Rust architecture ADR at `edfa845a3b5de902df988933416b7e4bf20caf67`. The [exact pinned local candidate](../../contracts/office-v1/README.md) now governs adapter tests; it is explicitly unmerged, not an approved main-branch contract. The actual binary's JSON is validated against its schema.
+
+The standalone executable provides `--new`, `--open <absolute_path>`, `--capabilities` (JSON stdout without GUI), and `--version` (actual build version, one line). Protocol v1 dispatch capabilities are exactly `new` and `open`; the native format's `read`/`write` flags describe persistence. Editing/save/present are UI features, not extra launcher actions. No PPTX support is advertised. Independent application and manifest tests do not claim successful native dispatch from a separately built Office process; that check remains pending. Reconcile future revisions explicitly, without runtime dependencies on mutable main or a neighboring repository.
 
 ## Consequences and follow-up
 

@@ -40,7 +40,7 @@ Status: planned, outside the first iteration. Dependencies: stable shared render
 
 ## 8 · Automation and Office integration
 
-Status: basic launch/capability adapter implemented against the owner fallback; wider automation planned. Dependencies: versioned upstream Office contract and stable command model. Exit: pinned interoperability tests and bounded automation without mutable-main/runtime coupling. Tests: headless capabilities/version, invalid arguments, actual supported-format claims and upstream fixtures when available. No silent uploads or remote execution.
+Status: basic launch/capability adapter implemented and the actual binary validated against the [pinned unmerged Office v1 candidate](contracts/office-v1/README.md); original fallback provenance retained. Wider automation and native cross-process dispatch verification are planned. Dependencies: accepted upstream contract and stable command model. Exit: pinned interoperability tests and bounded automation without mutable-main/runtime coupling. Tests: headless capabilities/version, schema/semantic rules, invalid arguments and actual format claims. No silent uploads or remote execution.
 
 ## 9 · Accessibility, performance and releases
 

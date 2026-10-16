@@ -980,7 +980,7 @@ if ui.button("From Current Slide   Shift+F5").clicked(){self.start_show(false,ct
                                 .add(
                                     DragValue::new(&mut font_size)
                                         .range(4.0..=400.0)
-                                        .suffix(" pt"),
+                                        .suffix(" u"),
                                 )
                                 .changed()
                             {

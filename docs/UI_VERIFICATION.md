@@ -32,7 +32,7 @@ All six states were visually inspected. Missing-glyph symbols on several initial
 | :--- | :--- |
 | Workspace build | Passed locally with locked dependencies |
 | Regression suite | **27 tests passed**: 19 core tests including full-model save/reopen after deleting original image, undo/redo/stacking, safe failed saves, input/resource/geometry limits, shared scene and view transforms; 4 actual binary CLI tests; 4 headless GUI-controller tests for note preservation, dirty-document guarding and resize geometry |
-| CLI | Actual binary capabilities/version print without GUI; malformed argument/document refusal is separately tested |
+| CLI | Actual binary capabilities/version print without GUI; manifest validated against the exact pinned Office v1 schema, dispatch actions limited to new/open; malformed argument/document refusal tested. Native Office-to-Slides process dispatch not tested |
 | Formatting and lint | `cargo fmt --all -- --check` and Clippy with `-D warnings` passed locally |
 | Running native framebuffer | Six captures generated successfully and inspected; no mockup substitution |
 | Windows 100%, 125%, 150% | **Not run**: host is macOS; mathematical transform tests are not native Windows DPI verification |
