@@ -10,12 +10,12 @@ The native Rust prototype already reports `0.1.0-alpha.1`. The owner requires ev
 
 ## Decision
 
-Use `0.1.0-alpha.N`, `0.1.0-beta.N` and `0.1.0-rc.N` for the initial development cycle. Use Cargo-compatible `0.2.0` for the first separately authorized public product release. The existing current version remains `0.1.0-alpha.1`, awaiting explicit owner confirmation; this policy change does not advance it.
+Use `0.1.0-alpha.N`, `0.1.0-beta.N` and `0.1.0-rc.N` for the initial development cycle. Use Cargo-compatible `0.2.0` for the first separately authorized public product release. Owner amendment on 2026-10-16 requires a counter increment and changelog entry for every completed logical change. The current assignment is `0.1.0-alpha.2`; candidate acceptance remains pending.
 
 Keep root workspace Cargo version as the single runtime source, inherited by both crates and emitted by the binary and Office manifest. Keep application versions independent from native content and Office protocol versions. Maintain an unreleased changelog and an explicit approval record in [VERSIONING.md](../VERSIONING.md).
 
-Every completed work report must end with the actual current version and approval status. Obtain explicit owner confirmation before changing a candidate number/channel. Version agreement, code review, merge authorization and release publication are separate decisions. Do not infer consent from silence or a passing check.
+Every completed work report must end with the actual current version and approval status. Routine prerelease counter increments are preauthorized; obtain explicit owner confirmation before channel promotion or changing the numbering scheme. Version agreement, code review, merge authorization and release publication are separate decisions. Do not infer consent from silence or a passing check.
 
 ## Consequences
 
-The owner can review a concrete candidate at each stage. Routine source/documentation commits can retain the same version. Historical test reports retain their original version. Future tags/artifacts use an agreed exact version and immutable source commit; published tags/artifacts are preserved. This ADR changes documentation and policy only; no runtime code, version number, document format, license, merge or release is changed.
+The owner can review a concrete candidate at each stage. Every completed logical code/UI/fix/configuration/standalone documentation change increments the prerelease counter once and adds a dated changelog entry. Implementation, validation, changelog and dedicated journal commits for the same change share that version to avoid recursive bumps. Read-only checks do not increment it. Historical test reports retain their original version. Future tags/artifacts use an agreed exact version and immutable source commit; published tags/artifacts are preserved. This amendment supersedes the original per-increment preapproval rule and advances the application identity to alpha.2. Document/protocol versions, license, merge and release are unchanged.

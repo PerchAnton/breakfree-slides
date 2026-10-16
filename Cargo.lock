@@ -503,7 +503,7 @@ checksum = "dc0b364ead1874514c8c2855ab558056ebfeb775653e7ae45ff72f28f8f3166c"
 
 [[package]]
 name = "breakfree-slides"
-version = "0.1.0-alpha.1"
+version = "0.1.0-alpha.2"
 dependencies = [
  "breakfree-slides-core",
  "eframe",
@@ -516,7 +516,7 @@ dependencies = [
 
 [[package]]
 name = "breakfree-slides-core"
-version = "0.1.0-alpha.1"
+version = "0.1.0-alpha.2"
 dependencies = [
  "base64",
  "image",
