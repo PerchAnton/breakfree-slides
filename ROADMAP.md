@@ -44,6 +44,6 @@ Status: basic launch/capability adapter implemented and the actual binary valida
 
 ## 9 · Accessibility, performance and releases
 
-Status: planned. Dependencies: declared supported workflows and owner license decision. Exit: native platform evidence, keyboard/focus/accessibility review, Windows 100/125/150% checks, packaging, private security reporting and release notes. Tests: bounded large decks/history/assets, font/glyph coverage, rendering/performance fixtures and native install/open/save/show. Release and merge require separate authorization.
+Status: planned. Dependencies: declared supported workflows and owner license decision. Exit: native platform evidence, keyboard/focus/accessibility review, Windows 100/125/150% checks, packaging, private security reporting and release notes. Tests: bounded large decks/history/assets, font/glyph coverage, rendering/performance fixtures and native install/open/save/show. Follow the accepted [version policy](docs/VERSIONING.md): initial alpha/beta/RC candidates stay on `0.1.0`; first public product release starts at `0.2.0`. Record exact version approval, tested commit and changelog before release; every work report includes current version and agreement status. Version agreement, release publication and merge require their corresponding explicit authorization.
 
 [Back to Slides](README.md) · [Suite roadmap](https://github.com/PerchAnton/breakfree-office/blob/main/ROADMAP.md)

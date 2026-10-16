@@ -71,6 +71,7 @@ A future compatibility matrix must describe unsupported elements and font substi
 | Area | Current position |
 | :--- | :--- |
 | Product direction | Documented |
+| Current application version | `0.1.0-alpha.1` — awaiting owner approval; first public product release planned as `0.2.0` |
 | Implementation language and UI toolkit | Rust required by the owner; native egui/eframe prototype proposed for review |
 | Slide model and native deck format | Editable objects in logical slide units; versioned `.bfslide` JSON with embedded raster bytes |
 | Windows, macOS and Linux | Native targets; local build/captures on macOS, Windows/DPI and other platform evidence still pending |
@@ -86,6 +87,8 @@ cargo run --locked -p breakfree-slides -- --new
 ```
 
 See [Windows and other native launch instructions](docs/BUILD.md), [the owner-approved Rust direction and architecture](docs/adr/0001-rust-native-editor.md), [UI reference parameters](docs/UI_SPEC.md), [actual captures and verification limits](docs/UI_VERIFICATION.md), and [dependency/font notices](docs/DEPENDENCIES.md). `--capabilities` emits JSON without starting the GUI; `--version` reports the build version. The adapter is tested against a [pinned Office v1 candidate](contracts/office-v1/README.md), with unmerged status and the original fallback provenance documented.
+
+Version progression and approval follow [VERSIONING.md](docs/VERSIONING.md); unreleased work is listed in [CHANGELOG.md](CHANGELOG.md). Initial alpha/beta/RC builds remain on `0.1.0`; each completed work report states the actual current version for owner agreement.
 
 ## The BreakFree family
 

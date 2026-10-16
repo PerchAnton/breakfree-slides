@@ -1,6 +1,6 @@
 # Working in BreakFree Slides
 
-Read README.md, ROADMAP.md, docs/REQUIREMENTS.md, docs/UI_SPEC.md, CONTRIBUTING.md and the ADRs first. Rust is the owner-approved mandatory implementation language. The software license remains an owner decision.
+Read README.md, ROADMAP.md, docs/REQUIREMENTS.md, docs/UI_SPEC.md, docs/VERSIONING.md, CONTRIBUTING.md and the ADRs first. Rust is the owner-approved mandatory implementation language. The software license remains an owner decision.
 
 ## Scope
 
@@ -30,6 +30,14 @@ Run the documented Rust formatting, lint and test commands, plus Markdown links,
 - Preserve a title/document bar, File and compact Ribbon, the specified main tabs and Home groups, left slide thumbnails, neutral central workspace, collapsible notes, contextual right formatting pane and status/view/zoom controls. Unimplemented actions must be disabled with an explanation. No fake cloud functions or Microsoft logo/name substitution.
 - Keep the GUI separate from the presentation model and engine. Editing, thumbnails and slide show must share the same content rendering path and slide geometry. Selection handles follow object geometry; viewport/DPI zoom never changes stored coordinates.
 - Capture actual running-app states and maintain explicit Windows 100%, 125%, 150%, resize, focus and keyboard verification status. Owner approval of Rust and the visual target is final; the provisional Rust GUI toolkit remains reviewable, and the license is unchanged. See `docs/adr/0001-rust-native-editor.md`.
+
+## Versions and owner approval
+
+- Follow `docs/VERSIONING.md` and ADR 0002. Keep all alpha, beta and release-candidate builds in the `0.1.0` line: `0.1.0-alpha.N`, `0.1.0-beta.N`, `0.1.0-rc.N`. The first owner-authorized public product release starts at `0.2.0` (display shorthand: 0.2).
+- Use `[workspace.package].version` in root `Cargo.toml` as the application-version source of truth. Keep inherited package/lock versions, executable `--version`, Office `app_version` and release notes consistent. Native document content and Office protocol versions are independent.
+- End every completed work report with the actual current application version and its owner-approval status, even when the number did not change. Separate a proposed next version from the actual version. The existing `0.1.0-alpha.1` is awaiting explicit owner approval under this policy.
+- Obtain explicit owner confirmation for a proposed version change or channel promotion. Record the approved version and confirmation date in `docs/VERSIONING.md` and both project logs. No reply, successful tests, CI, commit or PR publication counts as approval.
+- Maintain `CHANGELOG.md`; record unreleased work separately from published releases. Creating tags, publishing artifacts/releases and merging require the corresponding explicit authorization; version approval alone does not authorize those actions. Preserve published tags and artifacts without rewriting them.
 
 ## Журнал и приватное зеркало
 
